@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kuis SPLDV: Metode Substitusi</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e8f3fd;--card:#fff;--ink:#1f2d3d;--muted:#5b6b7c;--blue:#3178ad;--pink:#c94d6a;--ok:#2e8b57;--okbg:#dff3e7;--bad:#c0392b;--badbg:#fbe3e0;--line:#bcd6ee;--grid:#d3e6f7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10202e;--card:#182b3d;--ink:#eaf2fa;--muted:#9db2c6;--blue:#7bb8e8;--pink:#ee8aa3;--ok:#6fd49a;--okbg:#1c3d2e;--bad:#ff8f84;--badbg:#472320;--line:#2d4760;--grid:#17293a}}
+:root[data-theme="dark"]{--bg:#10202e;--card:#182b3d;--ink:#eaf2fa;--muted:#9db2c6;--blue:#7bb8e8;--pink:#ee8aa3;--ok:#6fd49a;--okbg:#1c3d2e;--bad:#ff8f84;--badbg:#472320;--line:#2d4760;--grid:#17293a}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100vh;background-color:var(--bg);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:28px 28px;color:var(--ink);font-family:'Nunito',system-ui,sans-serif;font-size:17px;line-height:1.5}
+main{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+h1,h2{font-family:'Baloo 2','Nunito',system-ui,sans-serif;color:var(--blue);margin:0;line-height:1.15}
+h1{font-size:2.1rem;font-weight:800}
+h2{font-size:1.4rem;font-weight:800}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:22px 20px;margin-top:16px}
+.muted{color:var(--muted)}
+input[type=text]{width:100%;font:inherit;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);margin-top:10px}
+button{font:inherit;cursor:pointer}
+.btn{display:block;width:100%;margin-top:16px;padding:13px;border:0;border-radius:14px;background:var(--pink);color:#fff;font-weight:700;font-size:1.05rem}
+.btn:focus-visible,.opt:focus-visible,input:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar>i{display:block;height:100%;width:0;background:var(--blue);transition:width .3s}
+.meta{display:flex;justify-content:space-between;margin-bottom:8px;font-weight:700;color:var(--muted);font-size:.95rem}
+.q{font-size:1.2rem;font-weight:700;margin:18px 0 14px}
+.opt{display:block;width:100%;text-align:left;padding:13px 14px;margin-top:10px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink)}
+.opt b{display:inline-block;width:1.6em;color:var(--blue)}
+.opt:not(:disabled):hover{border-color:var(--blue)}
+.opt.ok{background:var(--okbg);border-color:var(--ok)}
+.opt.bad{background:var(--badbg);border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.fb{margin-top:16px;padding:12px 14px;border-radius:14px;font-size:.98rem}
+.fb.ok{background:var(--okbg);color:var(--ok)}
+.fb.bad{background:var(--badbg);color:var(--bad)}
+.fb span{color:var(--ink)}
+.score{font-family:'Baloo 2',system-ui,sans-serif;font-size:4rem;font-weight:800;color:var(--pink);line-height:1;margin:8px 0}
+.rev{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:var(--bg);font-size:.95rem}
+.rev i{font-style:normal;font-weight:700}
+.hide{display:none}
+@media (prefers-reduced-motion:reduce){.bar>i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<section id="start">
+  <h1>Kuis SPLDV</h1>
+  <p class="muted">Metode substitusi · Matematika Fase D</p>
+  <div class="card">
+    <h2>Siap mengerjakan?</h2>
+    <p>5 soal pilihan ganda. Jawaban langsung dikoreksi, jadi kamu bisa belajar dari setiap soal.</p>
+    <label for="nama" class="muted">Nama kamu</label>
+    <input id="nama" type="text" maxlength="40" placeholder="Tulis namamu" autocomplete="name">
+    <label for="kelas" class="muted" style="display:block;margin-top:12px">Kelas</label>
+    <input id="kelas" type="text" maxlength="10" placeholder="Contoh: 8A" style="margin-top:6px">
+    <p id="err" class="muted hide" style="color:var(--bad);margin:10px 0 0">Isi nama dan kelas dulu ya.</p>
+    <button class="btn" id="mulai">Mulai kuis</button>
+  </div>
+</section>
+
+<section id="quiz" class="hide">
+  <div class="meta"><span id="no"></span><span id="sk"></span></div>
+  <div class="bar"><i id="pg"></i></div>
+  <div class="card">
+    <div class="q" id="q"></div>
+    <div id="opts"></div>
+    <div id="fb" class="fb hide" role="status"></div>
+    <button class="btn hide" id="next">Soal berikutnya</button>
+  </div>
+</section>
+
+<section id="end" class="hide">
+  <div class="card">
+    <h2 id="hi"></h2>
+    <div class="score" id="sc"></div>
+    <p id="msg" class="muted"></p>
+    <div id="rev"></div>
+    <p id="st" class="muted" role="status"></p>
+    <button class="btn" id="ulang">Ulangi kuis</button>
+  </div>
+</section>
+</main>
+
+<script>
+var Q=[
+{q:"Yang merupakan SPLDV adalah ...",o:["x + y = 5 dan x − y = 1","x² + y = 4 dan x − y = 2","x + y + z = 6 dan x = 1","x + 3 = 5 dan y − 1 = 4"],a:0,e:"B berpangkat dua, C punya tiga variabel, dan D hanya satu variabel pada tiap persamaan."},
+{q:"Jika y = 2x dan x + y = 12, nilai x adalah ...",o:["2","3","4","6"],a:2,e:"Substitusi y = 2x: x + 2x = 12, maka 3x = 12 dan x = 4."},
+{q:"Penyelesaian x + y = 10 dan x = y + 2 adalah ...",o:["(5, 5)","(6, 4)","(4, 6)","(7, 3)"],a:1,e:"Substitusi x = y + 2: y + 2 + y = 10, maka y = 4 dan x = 6."},
+{q:"2 pensil + 1 penghapus = Rp7.000, sedangkan 1 pensil + 1 penghapus = Rp5.000. Harga satu pensil adalah ...",o:["Rp1.000","Rp2.000","Rp3.000","Rp4.000"],a:1,e:"y = 5.000 − x. Lalu 2x + 5.000 − x = 7.000, maka x = 2.000."},
+{q:"Jika x + y = 8 dan 3x + 2y = 19, nilai y adalah ...",o:["3","4","5","6"],a:2,e:"x = 8 − y. Lalu 3(8 − y) + 2y = 19, maka 24 − y = 19 dan y = 5."}
+];
+/* GANTI dengan URL Web App dari Google Apps Script (berakhiran /exec) */
+var SCRIPT_URL="https://script.google.com/macros/s/AKfycbz_wxCLIjxsd8Cu_pMSVxvySJtJHg1mu-Muzi-GRi9Lo2pzGsfgh1O_z9Bpo5qviii_Vw/exec";
+var L=["A","B","C","D"],i=0,s=0,jw=[],nama="",kelas="";
+var $=function(id){return document.getElementById(id)};
+function show(id){["start","quiz","end"].forEach(function(x){$(x).classList.toggle("hide",x!==id)})}
+function render(){
+  var d=Q[i];
+  $("no").textContent="Soal "+(i+1)+" dari "+Q.length;
+  $("sk").textContent="Benar: "+s;
+  $("pg").style.width=(i/Q.length*100)+"%";
+  $("q").textContent=d.q;
+  $("fb").className="fb hide";$("next").classList.add("hide");
+  var box=$("opts");box.innerHTML="";
+  d.o.forEach(function(t,k){
+    var b=document.createElement("button");
+    b.className="opt";b.type="button";
+    b.innerHTML="<b>"+L[k]+".</b> ";
+    b.appendChild(document.createTextNode(t));
+    b.onclick=function(){pilih(k)};
+    box.appendChild(b);
+  });
+}
+function pilih(k){
+  var d=Q[i],btn=$("opts").children,benar=k===d.a;
+  jw[i]=k;if(benar)s++;
+  for(var n=0;n<btn.length;n++){btn[n].disabled=true;
+    if(n===d.a)btn[n].classList.add("ok");
+    else if(n===k)btn[n].classList.add("bad");}
+  var f=$("fb");f.className="fb "+(benar?"ok":"bad");
+  f.innerHTML="<strong>"+(benar?"Benar!":"Belum tepat.")+"</strong> <span></span>";
+  f.lastChild.textContent=d.e;
+  $("sk").textContent="Benar: "+s;
+  $("pg").style.width=((i+1)/Q.length*100)+"%";
+  $("next").textContent=i===Q.length-1?"Lihat hasil":"Soal berikutnya";
+  $("next").classList.remove("hide");
+  $("next").focus();
+}
+function kirim(){
+  var st=$("st");
+  if(SCRIPT_URL.indexOf("http")!==0){st.textContent="";return}
+  st.textContent="Mengirim hasil...";
+  var data={nama:nama,kelas:kelas,skor:Math.round(s/Q.length*100),benar:s,total:Q.length,
+    jawaban:jw.map(function(k){return L[k]}),kunci:Q.map(function(d){return L[d.a]})};
+  fetch(SCRIPT_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)})
+    .then(function(){st.textContent="Hasilmu sudah terkirim ke guru."})
+    .catch(function(){st.textContent="Hasil belum terkirim. Cek koneksi internet, lalu coba lagi."});
+}
+function akhir(){
+  show("end");
+  kirim();
+  $("hi").textContent=nama?"Hasil "+nama:"Hasil kuis";
+  $("sc").textContent=Math.round(s/Q.length*100);
+  $("msg").textContent=s+" dari "+Q.length+" soal benar. "+(s===Q.length?"Sempurna, kamu sudah paham substitusi!":s>=3?"Bagus! Pelajari lagi soal yang masih salah.":"Ayo ulangi materinya, lalu coba kuis ini sekali lagi.");
+  var r=$("rev");r.innerHTML="";
+  Q.forEach(function(d,n){
+    var p=document.createElement("p");p.className="rev";
+    var ok=jw[n]===d.a;
+    var b=document.createElement("i");b.textContent="Soal "+(n+1)+(ok?" ✓ ":" ✗ ");
+    p.appendChild(b);
+    p.appendChild(document.createTextNode(ok?"Benar: "+d.o[d.a]:"Jawabanmu: "+d.o[jw[n]]+". Yang benar: "+d.o[d.a]));
+    r.appendChild(p);
+  });
+  window.scrollTo(0,0);
+}
+$("mulai").onclick=function(){
+  nama=$("nama").value.trim();kelas=$("kelas").value.trim();
+  if(!nama||!kelas){$("err").classList.remove("hide");return}
+  $("err").classList.add("hide");i=0;s=0;jw=[];show("quiz");render()};
+$("next").onclick=function(){if(i<Q.length-1){i++;render()}else akhir()};
+$("ulang").onclick=function(){show("start");window.scrollTo(0,0)};
+</script>
+</body>
+</html>
